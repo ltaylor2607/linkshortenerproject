@@ -126,3 +126,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  font-family: var(--font-sans);
+}
