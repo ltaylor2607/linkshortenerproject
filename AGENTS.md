@@ -16,6 +16,7 @@ A full-stack link-shortening web app built with Next.js App Router, Clerk authen
 ## ⚠️ Critical Warnings
 
 - **Next.js 16 is not the Next.js you know.** APIs, file conventions, and behaviour may differ from your training data. Before writing any Next.js code, read `node_modules/next/dist/docs/` and heed all deprecation notices.
+- **Never use `middleware.ts`.** It is deprecated in this version of Next.js. Request interception logic (including Clerk auth) belongs in [`proxy.ts`](proxy.ts) at the project root instead. Do not create a `middleware.ts` file, and do not port examples that reference one.
 - **Drizzle ORM 1.0.0-rc** — the API surface is in release-candidate state; do not assume stable-release patterns from older training data.
 - **Clerk v7** — component names, hooks, and provider APIs differ significantly from earlier versions. Always verify against the installed package source.
 - **Tailwind CSS v4** — configuration, plugin syntax, and utility names have breaking changes from v3. Never apply v3 patterns.
