@@ -3,8 +3,6 @@
 This file is the entry point for all LLM coding agents working in this repository.
 **Read this file first, then read every doc linked below before writing any code.**
 
-> ⛔ **STOP. Before you write a single line of code, you MUST open and read every relevant file in the `/docs` directory. Skipping this step is not permitted under any circumstances.**
-
 ---
 
 ## Project Overview
@@ -23,23 +21,11 @@ A full-stack link-shortening web app built with Next.js App Router, Clerk authen
 
 ---
 
-## ⛔ Agent Documentation Index — MANDATORY PRE-READING
-
-**You MUST read the relevant file(s) below BEFORE generating ANY code.** This is not optional. If your task touches authentication, UI, or any other documented area, open the corresponding file and read it in full first. Failure to do so will result in incorrect, non-compliant code.
-
-| Topic | File | Read before… |
-|---|---|---|
-| Authentication | [`docs/auth.md`](docs/auth.md) | Any Clerk usage, route protection, session handling |
-| UI Components | [`docs/ui.md`](docs/ui.md) | Any component, layout, or styling work |
-
----
-
 ## Non-Negotiable Rules
 
-1. **Read `/docs` first — always.** Before writing any code, read every `/docs` file relevant to your task. This rule takes precedence over everything else.
-2. **TypeScript strict mode is on.** Every file must typecheck cleanly. No `any`, no `@ts-ignore`.
-3. **No `"use client"` unless necessary.** Prefer React Server Components. Only add `"use client"` when the component uses browser APIs, event handlers, or React state/effects.
-4. **Use the `@/` path alias** for all internal imports. Never use relative `../../` paths that traverse more than one level.
-5. **Never hard-code secrets or connection strings.** All credentials live in environment variables (`.env.local`).
-6. **Run `npm run lint` and ensure zero errors** before considering any task complete.
-7. **Do not install new dependencies** without explicit user approval.
+1. **TypeScript strict mode is on.** Every file must typecheck cleanly. No `any`, no `@ts-ignore`.
+2. **No `"use client"` unless necessary.** Prefer React Server Components. Only add `"use client"` when the component uses browser APIs, event handlers, or React state/effects.
+3. **Use the `@/` path alias** for all internal imports. Never use relative `../../` paths that traverse more than one level.
+4. **Never hard-code secrets or connection strings.** All credentials live in environment variables (`.env.local`).
+5. **Run `npm run lint` and ensure zero errors** before considering any task complete.
+6. **Do not install new dependencies** without explicit user approval.
