@@ -10,6 +10,18 @@ export function getLinksByUserId(clerkUserId: string): Promise<Link[]> {
     .orderBy(desc(links.createdAt));
 }
 
+export async function getLinkByShortCode(
+  shortCode: string,
+): Promise<Link | undefined> {
+  const [link] = await db
+    .select()
+    .from(links)
+    .where(eq(links.shortCode, shortCode))
+    .limit(1);
+
+  return link;
+}
+
 type CreateLinkInput = {
   clerkUserId: string;
   destinationUrl: string;
