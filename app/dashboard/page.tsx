@@ -3,12 +3,15 @@ import { redirect } from "next/navigation";
 import {
   Card,
   CardAction,
+  CardFooter,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
 import { getLinksByUserId } from "@/data/links";
 import { CreateLinkDialog } from "@/app/dashboard/create-link-dialog";
+import { EditLinkDialog } from "@/app/dashboard/edit-link-dialog";
+import { DeleteLinkDialog } from "@/app/dashboard/delete-link-dialog";
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" });
 
@@ -47,6 +50,10 @@ export default async function DashboardPage() {
                     </time>
                   </CardAction>
                 </CardHeader>
+                <CardFooter className="justify-end gap-2">
+                  <EditLinkDialog link={link} />
+                  <DeleteLinkDialog link={link} />
+                </CardFooter>
               </Card>
             </li>
           ))}
