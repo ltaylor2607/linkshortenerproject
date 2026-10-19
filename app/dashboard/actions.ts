@@ -17,7 +17,14 @@ type CreateLinkResult =
 
 const destinationUrlSchema = z
   .url({ protocol: /^https?$/, error: "Enter a valid http(s) URL." })
-  .max(2048, "URL is too long.");
+  .max(2048, "URL is too long.")
+  .refine(
+    (value) => {
+      const { username, password } = new URL(value);
+      return !username && !password;
+    },
+    { message: "URLs with embedded credentials are not allowed." },
+  );
 
 const shortCodeSchema = z
   .string()
@@ -26,9 +33,19 @@ const shortCodeSchema = z
     "Short code must be 3–20 characters: letters, numbers, - or _.",
   );
 
+const trimmedDestinationUrlSchema = z
+  .string({ error: "Enter a valid http(s) URL." })
+  .trim()
+  .pipe(destinationUrlSchema);
+
 const createLinkSchema = z.object({
-  destinationUrl: destinationUrlSchema,
-  shortCode: shortCodeSchema.optional(),
+  destinationUrl: trimmedDestinationUrlSchema,
+  shortCode: z
+    .string({ error: "Invalid short code." })
+    .trim()
+    .optional()
+    .transform((value) => value || undefined)
+    .pipe(shortCodeSchema.optional()),
 });
 
 const MAX_GENERATION_ATTEMPTS = 5;
@@ -47,10 +64,7 @@ export async function createLinkAction(
       return { error: "You must be signed in to create a link." };
     }
 
-    const parsed = createLinkSchema.safeParse({
-      destinationUrl: input.destinationUrl.trim(),
-      shortCode: input.shortCode?.trim() || undefined,
-    });
+    const parsed = createLinkSchema.safeParse(input);
     if (!parsed.success) {
       return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
     }
@@ -96,9 +110,22 @@ type UpdateLinkInput = {
 
 type UpdateLinkResult = { success: true } | { error: string };
 
+const linkIdSchema = z
+  .number({ error: "Invalid link." })
+  .int("Invalid link.")
+  .positive("Invalid link.");
+
 const updateLinkSchema = z.object({
-  destinationUrl: destinationUrlSchema,
-  shortCode: shortCodeSchema,
+  id: linkIdSchema,
+  destinationUrl: trimmedDestinationUrlSchema,
+  shortCode: z
+    .string({ error: "Invalid short code." })
+    .trim()
+    .pipe(shortCodeSchema),
+});
+
+const deleteLinkSchema = z.object({
+  id: linkIdSchema,
 });
 
 export async function updateLinkAction(
@@ -110,16 +137,13 @@ export async function updateLinkAction(
       return { error: "You must be signed in to update a link." };
     }
 
-    const parsed = updateLinkSchema.safeParse({
-      destinationUrl: input.destinationUrl.trim(),
-      shortCode: input.shortCode.trim(),
-    });
+    const parsed = updateLinkSchema.safeParse(input);
     if (!parsed.success) {
       return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
     }
 
     const updated = await updateLink({
-      id: input.id,
+      id: parsed.data.id,
       clerkUserId: userId,
       destinationUrl: parsed.data.destinationUrl,
       shortCode: parsed.data.shortCode,
@@ -152,7 +176,15 @@ export async function deleteLinkAction(
       return { error: "You must be signed in to delete a link." };
     }
 
-    const deleted = await deleteLink({ id: input.id, clerkUserId: userId });
+    const parsed = deleteLinkSchema.safeParse(input);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+    }
+
+    const deleted = await deleteLink({
+      id: parsed.data.id,
+      clerkUserId: userId,
+    });
     if (!deleted) {
       return { error: "That link no longer exists." };
     }

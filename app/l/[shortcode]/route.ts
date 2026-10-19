@@ -23,6 +23,10 @@ export async function GET(
     return new NextResponse("Link not found", { status: 404 });
   }
 
+  if (destination.username || destination.password) {
+    return new NextResponse("Link not found", { status: 404 });
+  }
+
   // Temporary redirect: destinations can be edited, so browsers must not cache it.
   return NextResponse.redirect(destination, 307);
 }
